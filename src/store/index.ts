@@ -10,6 +10,7 @@ export default new Vuex.Store<IState>({
     xData: [],
     size: 0,
     isShowChart: true,
+    isActive: false,
   },
   getters: {},
   mutations: {
@@ -36,7 +37,13 @@ export default new Vuex.Store<IState>({
       state.prices = [];
     },
     XValues(state) {
-      state.xData = state.xData.reverse().slice(0,5).reverse();
+      state.xData = state.xData.reverse().slice(0, 5).reverse();
+    },
+    isActive(state, value) {
+      state.isActive = value;
+    },
+    setTickerList(state, value) {
+      state.tickers = value;
     }
   },
   actions: {},
@@ -55,4 +62,5 @@ interface IState {
   xData: String[];
   size: number;
   isShowChart: Boolean;
+  isActive: Boolean;
 }

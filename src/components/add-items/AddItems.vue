@@ -24,7 +24,10 @@
       >
         {{ text }}
       </button>
-      <TickersList />
+      <TickersList
+        @showAddTicker="showAddTicker = $event"
+        @text="text = $event"
+      />
     </div>
   </div>
 </template>
@@ -42,12 +45,12 @@ export default class AddItems extends Vue {
   private showAddTicker: Boolean = true;
   private isShowChart: Boolean = true;
   private newTicker: String = "";
-  private text: String = "Show Chart";
+  private text: String = "Show RealTime Chart";
   private active =
     "bg-gradient-to-r from-indigo-700 to-purple-800 ... px-2 py-3.5 rounded-lg ml-2 inline";
   private inActive =
     "bg-gradient-to-r from-indigo-700 to-purple-800 ... px-2 py-3.5 rounded-lg ml-2 opacity-50 cursor-not-allowed inline";
-    
+
   addTicker() {
     if (
       this.newTicker != "" &&
@@ -58,6 +61,8 @@ export default class AddItems extends Vue {
         name: this.newTicker,
         edit: false,
       });
+      this.newTicker = "";
+      this.$store.commit("isActive", this.tickers.length > 0);
     }
   }
 
@@ -66,16 +71,16 @@ export default class AddItems extends Vue {
   }
 
   private get isActive() {
-    return this.tickers.length > 0;
+    return this.$store.state.isActive;
   }
 
   private showChart() {
     this.isShowChart = !this.isShowChart;
     if (this.isShowChart) {
-      this.text = "Show Chart";
+      this.text = "Show RealTime Chart";
       this.showAddTicker = true;
     } else {
-      this.text = "Stop Chart";
+      this.text = "Stop RealTimeChart";
       this.showAddTicker = false;
     }
 

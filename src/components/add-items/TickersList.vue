@@ -51,6 +51,12 @@ export default class TickersList extends Vue {
       "updateTickers",
       this.tickers.filter((item) => item.id != index)
     );
+    this.$store.commit("isActive", this.tickers.length > 0);
+    if (!this.isActive) {
+      this.$emit("showAddTicker", true);
+      this.$emit("text", "Show RealTime Chart");
+      this.$store.commit("isShowChart", true);
+    }
   }
 
   private onEdit(id: String) {
@@ -60,6 +66,10 @@ export default class TickersList extends Vue {
       }
     }
     this.$store.commit("updateTickers", this.tickers);
+  }
+
+  private get isActive() {
+    return this.$store.state.isActive;
   }
 
   private onCancel(id: String) {

@@ -24,6 +24,7 @@ export default class HomePage extends Vue {
   private setIntervalForFetch!: number;
   private length = 0;
   private initial = 0;
+
   @Watch("isShowChart")
   async fetchData() {
     if (!this.isShowChart) {
@@ -39,6 +40,16 @@ export default class HomePage extends Vue {
     }
   }
 
+  @Watch("tickers")
+  async fetchHistoricalData() {
+    console.log("called");
+    this.barChartSeriesData = [];
+    if (this.isActive) {
+      console.log("called1")
+      await this.fetchStocksData(this.tickers);
+    }
+  }
+
   async fetchStocksData(tickers: ITicker[]) {
     try {
       const responses = await Promise.all(
@@ -47,7 +58,16 @@ export default class HomePage extends Vue {
         )
       );
       this.$store.commit("xData", moment().format("hh:mm:ss A"));
-      const prices = responses.map((item) => item.data.c);
+
+      const prices = responses.map((item: any, index) => {
+        if (item.c == 0 && item.d == null) {
+          this.$store.commit("setTickerList", tickers.pop());
+          alert("Please add valid Ticker");
+        } else {
+          return item.data.c;
+        }
+      });
+      console.log(prices);
       this.initial++;
       console.log(prices);
       this.length += prices.length;
@@ -111,7 +131,8 @@ export default class HomePage extends Vue {
     return {
       chart: {
         defaultSeriesType: "column",
-        height: "750",
+        height: 750,
+        width: 900,
         backgroundColor: "rgba(0,0,0,0)",
         style: {
           color: "#fff",
@@ -149,8 +170,15 @@ export default class HomePage extends Vue {
           borderWidth: 0,
         },
       },
+      legend: {
+itemStyle:{'color':'white'}
+      },
       series: this.barChartSeriesData,
     };
+  }
+
+  private get isActive() {
+    return this.$store.state.isActive;
   }
 }
 </script>

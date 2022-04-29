@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="isActive">
     <highcharts :options="barChartOptions" height= "100%" width="100%" :ref="'chart'"></highcharts>
   </div>
 </template>
@@ -25,6 +25,10 @@ export default class BarChart extends Vue {
 
   private get isShowChart() {
     return this.$store.state.isShowChart;
+  }
+
+   private get isActive() {
+    return this.$store.state.isActive;
   }
 }
 </script>
