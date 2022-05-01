@@ -57,7 +57,7 @@ export default class HomePage extends Vue {
       return true;
     } else {
       alert(
-        `Market is closed currently as it is " +${holiday_reason}". Please come back later`
+        `Market is closed currently as it is ${holiday_reason}. Please come back later.`
       );
       return false;
     }
@@ -77,7 +77,7 @@ export default class HomePage extends Vue {
           this.$store.commit("setTickerList", tickers.pop());
           alert("Please add valid Ticker");
         } else {
-          return item.data.c - (Math.floor(Math.random() * 10) + 1) * 10;
+          return item.data.c;
         }
       });
       this.initial++;
