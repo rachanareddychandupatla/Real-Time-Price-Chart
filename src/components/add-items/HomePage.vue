@@ -35,6 +35,8 @@ export default class HomePage extends Vue {
           () => this.fetchStocksData(this.tickers),
           5000
         );
+      } else {
+        this.$store.commit('isShowChart', true);
       }
     } else {
       // this.barChartSeriesData = [];
@@ -73,8 +75,9 @@ export default class HomePage extends Vue {
       this.$store.commit("xData", moment().format("hh:mm:ss A"));
 
       const prices = responses.map((item: any, index) => {
-        if (item.c == 0 && item.d == null) {
-          this.$store.commit("setTickerList", tickers.pop());
+        if (item.data.c == 0 && item.data.d == null) {
+          tickers.pop();
+          this.$store.commit("setTickerList", tickers);
           alert("Please add valid Ticker");
         } else {
           return item.data.c;
@@ -170,7 +173,7 @@ export default class HomePage extends Vue {
         headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
         pointFormat:
           '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
-          '<td style="padding:0"><b>{point.y:.1f} mm</b></td></tr>',
+          '<td style="padding:0"><b>{point.y:.1f} USD</b></td></tr>',
         footerFormat: "</table>",
         shared: true,
         useHTML: true,

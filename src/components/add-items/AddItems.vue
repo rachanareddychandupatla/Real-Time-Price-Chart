@@ -43,22 +43,21 @@ import { uniqueId } from "lodash";
 })
 export default class AddItems extends Vue {
   private showAddTicker: Boolean = true;
-  private isShowChart: Boolean = true;
   private newTicker: String = "";
-  private text: String = "Show RealTime Chart";
   private active =
     "bg-gradient-to-r from-indigo-700 to-purple-800 ... px-2 py-3.5 rounded-lg ml-2 inline";
   private inActive =
     "bg-gradient-to-r from-indigo-700 to-purple-800 ... px-2 py-3.5 rounded-lg ml-2 opacity-50 cursor-not-allowed inline";
 
   addTicker() {
+    let ticker = this.newTicker;
     if (
-      this.newTicker != "" &&
+      ticker.trim().length != 0 &&
       this.tickers.filter((e) => e.name === this.newTicker).length == 0
     ) {
       this.$store.commit("addTicker", {
         id: uniqueId("id"),
-        name: this.newTicker,
+        name: this.newTicker.toUpperCase(),
         edit: false,
       });
       this.newTicker = "";
@@ -74,17 +73,23 @@ export default class AddItems extends Vue {
     return this.$store.state.isActive;
   }
 
-  private showChart() {
-    this.isShowChart = !this.isShowChart;
-    if (this.isShowChart) {
-      this.text = "Show RealTime Chart";
-      this.showAddTicker = true;
-    } else {
-      this.text = "Stop RealTimeChart";
-      this.showAddTicker = false;
-    }
+  
+  private get isShowChart() {
+    return this.$store.state.isShowChart;
+  }
 
-    this.$store.commit("isShowChart", this.isShowChart);
+  private get text() {
+    if (this.isShowChart) {
+      this.showAddTicker = true;
+      return "Show RealTime Chart";
+    } else {
+      this.showAddTicker = false;
+      return "Stop RealTimeChart";
+    }
+  }
+
+  private showChart() {
+    this.$store.commit("isShowChart", !this.isShowChart);
   }
 }
 </script>
