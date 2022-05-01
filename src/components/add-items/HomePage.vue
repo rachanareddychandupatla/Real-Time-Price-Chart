@@ -12,6 +12,7 @@ import BChart from "./BChart.vue"; // @ is an alias to /src
 import { ITicker } from "../../store/";
 import { HTTP } from "../../services/api";
 import moment from "moment";
+import {valid_date} from "./utils";
 
 @Component({
   components: {
@@ -28,11 +29,13 @@ export default class HomePage extends Vue {
   @Watch("isShowChart")
   async fetchData() {
     if (!this.isShowChart) {
-      this.fetchStocksData(this.tickers);
-      this.setIntervalForFetch = setInterval(
-        () => this.fetchStocksData(this.tickers),
-        5000
-      );
+      if (this.checkIfDataAvailable()) {
+        this.fetchStocksData(this.tickers);
+        this.setIntervalForFetch = setInterval(
+          () => this.fetchStocksData(this.tickers),
+          5000
+        );
+      }
     } else {
       // this.barChartSeriesData = [];
       this.length = 0;
@@ -42,11 +45,21 @@ export default class HomePage extends Vue {
 
   @Watch("tickers")
   async fetchHistoricalData() {
-    console.log("called");
     this.barChartSeriesData = [];
     if (this.isActive) {
-      console.log("called1")
       await this.fetchStocksData(this.tickers);
+    }
+  }
+
+  private checkIfDataAvailable() {
+    const { holiday, holiday_reason, time_up } = valid_date();
+    if (holiday == false && time_up == false) {
+      return true;
+    } else {
+      alert(
+        `Market is closed currently as it is " +${holiday_reason}". Please come back later`
+      );
+      return false;
     }
   }
 
@@ -64,12 +77,10 @@ export default class HomePage extends Vue {
           this.$store.commit("setTickerList", tickers.pop());
           alert("Please add valid Ticker");
         } else {
-          return item.data.c;
+          return item.data.c - (Math.floor(Math.random() * 10) + 1) * 10;
         }
       });
-      console.log(prices);
       this.initial++;
-      console.log(prices);
       this.length += prices.length;
       this.dataSet(prices);
       this.$store.commit("priceData", prices);
@@ -171,7 +182,7 @@ export default class HomePage extends Vue {
         },
       },
       legend: {
-itemStyle:{'color':'white'}
+        itemStyle: { color: "white" },
       },
       series: this.barChartSeriesData,
     };
